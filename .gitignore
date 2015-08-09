@@ -1,0 +1,10 @@
+.gradle
+gradle
+gradlew
+gradlew.bat
+openam-server.iml
+openam-server.ipr
+openam-server.iws
+target
+lib
+build
