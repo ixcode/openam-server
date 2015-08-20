@@ -4,7 +4,7 @@ import ixcode.platform.LogbackConfiguration;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
+
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +76,7 @@ public class OpenAmServer {
 
     private Handler openAmWebAppHandler() {
         WebAppContext webappHandler = new WebAppContext();
-        webappHandler.setContextPath("/");
+        webappHandler.setContextPath("/openam");
         webappHandler.setWar(openAmWarFilePath);
         return webappHandler;
     }
