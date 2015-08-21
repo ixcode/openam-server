@@ -8,13 +8,15 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.codehaus.jackson.map.ObjectMapper;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Collections.emptyMap;
 
 /**
  * Created by jmdb on 21/08/2015.
@@ -68,8 +70,11 @@ public class Http {
                     in.close();
                 }
                 System.out.println("\n" + responseBody + "\n");
-                ObjectMapper mapper = new ObjectMapper();
-                return mapper.readValue(responseBody.toString(), Map.class);
+                if (responseBody.length() == 0) {
+                    return emptyMap();
+                }
+                    ObjectMapper mapper = new ObjectMapper();
+                    return mapper.readValue(responseBody.toString(), Map.class);
             }
         } finally {
             response.close();

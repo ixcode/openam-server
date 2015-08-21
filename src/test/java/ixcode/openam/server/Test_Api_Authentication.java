@@ -42,7 +42,7 @@ public class Test_Api_Authentication extends HttpTestBase {
 
         Map responseData = http.execute_POST(request);
 
-        assertThat((String)responseData.get("tokenId"), is(notNullValue()));
+        assertThat(responseData.get("tokenId"), is(notNullValue()));
     }
 
 
