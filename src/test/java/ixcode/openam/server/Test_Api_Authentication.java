@@ -1,20 +1,10 @@
 package ixcode.openam.server;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import ixcode.platform.HttpTestBase;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -22,20 +12,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class Test_Api_Authentication {
+public class Test_Api_Authentication extends HttpTestBase {
 
-
-    private Http http = new Http();
-
-    @Before
-    public void init_http() {
-        http.init();
-    }
-
-    @After
-    public void close_http() throws Exception {
-        http.destroy();
-    }
 
     /**
      * <pre>

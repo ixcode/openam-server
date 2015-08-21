@@ -1,4 +1,4 @@
-package ixcode.openam.server;
+package ixcode.platform;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
