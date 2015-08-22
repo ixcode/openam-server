@@ -33,7 +33,7 @@ public class Test_Logout extends HttpTestBase {
     public void can_logout() throws Exception {
         HttpPost request = new HttpPost("http://loan.example.com:9009/openam/json/sessions/?_action=logout");
         request.addHeader("iplanetDirectoryPro", tokenId.toString());
-
+        request.addHeader("Content-Type", "application/json");
 
         Map responseData = http.execute_POST(request);
 

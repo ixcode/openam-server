@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import static ch.qos.logback.classic.Level.DEBUG;
 import static ch.qos.logback.classic.Level.INFO;
 import static ixcode.platform.LogbackConfiguration.STANDARD_OPS_FORMAT;
 import static ixcode.platform.LogbackConfiguration.initialiseConsoleLogging;
