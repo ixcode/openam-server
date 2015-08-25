@@ -6,7 +6,11 @@ apply plugin: 'java'
 sourceCompatibility = 1.5
 
 project.ext {
-    jettyVersion = "8.1.17.v20150415"  // ideally would be 9.1.5.v20140505 which is latest that supports JDK 7
+    jettyVersion = "9.3.2.v20150730"  // ideally would be 9.1.5.v20140505 which is latest that supports JDK 7
+    // or even better running 9.3.2.v20150730 under jdk 8
+    // but we sometimes need 8.1.17.v20150415
+
+
 }
 
 

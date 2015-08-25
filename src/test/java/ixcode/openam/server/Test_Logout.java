@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,19 +26,26 @@ public class Test_Logout extends HttpTestBase {
 
     @Before
     public void authenticate() throws Exception {
-        tokenId = new OpenAmClient(http).authenticate("worker", "worker");
+        tokenId = new OpenAmClient(http).authenticate("demo", "changeit");
     }
 
 
+    /**
+     * When OpenAM searches for the header its looking for it in lower case
+     * See bug at http://bugster.forgerock.org/jira/browse/OPENAM-6167
+     *
+     * Doesn't seem to be affected by version of jetty
+     * @throws Exception
+     */
     @Test
     public void can_logout() throws Exception {
         HttpPost request = new HttpPost("http://loan.example.com:9009/openam/json/sessions/?_action=logout");
-        request.addHeader("iplanetDirectoryPro", tokenId.toString());
+        request.addHeader("iPlanetDirectoryPro".toLowerCase(), tokenId.toString());
         request.addHeader("Content-Type", "application/json");
 
         Map responseData = http.execute_POST(request);
 
-        //assertThat(responseData.get("tokenId"), is(notNullValue()));
+        assertThat((String)responseData.get("result"), is(equalTo("Successfully logged out")));
     }
 
     @Test

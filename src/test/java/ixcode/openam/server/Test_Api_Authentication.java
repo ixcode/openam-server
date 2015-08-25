@@ -33,8 +33,8 @@ public class Test_Api_Authentication extends HttpTestBase {
 
         HttpPost request = new HttpPost("http://loan.example.com:9009/openam/json/authenticate");
 
-        request.addHeader("X-OpenAM-Username", "adminuser");
-        request.addHeader("X-OpenAM-Password", "adminuser");
+        request.addHeader("X-OpenAM-Username", "demo");
+        request.addHeader("X-OpenAM-Password", "changeit");
 
         StringEntity requestData = new StringEntity("{}");
         requestData.setContentType("application/json");
@@ -45,6 +45,15 @@ public class Test_Api_Authentication extends HttpTestBase {
         assertThat(responseData.get("tokenId"), is(notNullValue()));
     }
 
+    /**
+     *
+     * @throws Exception
+     */
+    @Test
+    public void can_authenticate_valid_user_with_legacy_api() throws Exception {
+
+    }
+
 
     @Test
     public void fails_to_authenticate_dodgy_creds() throws Exception {
@@ -52,7 +61,7 @@ public class Test_Api_Authentication extends HttpTestBase {
         HttpPost request = new HttpPost("http://loan.example.com:9009/openam/json/authenticate");
 
 
-        request.addHeader("X-OpenAM-Username", "adminuser");
+        request.addHeader("X-OpenAM-Username", "demo");
         request.addHeader("X-OpenAM-Password", "foo");
 
         StringEntity requestData = new StringEntity("{}");
