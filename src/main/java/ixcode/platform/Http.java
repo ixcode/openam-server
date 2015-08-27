@@ -12,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +36,7 @@ public class Http {
 
     }
 
-    public Map execute_POST(HttpPost POST) throws IOException {
+    public HttpResponse execute_POST(HttpPost POST) throws IOException {
         System.out.println(POST);
 
         List<Header> headers = Arrays.asList(POST.getAllHeaders());
@@ -71,10 +70,12 @@ public class Http {
                 }
                 System.out.println("\n" + responseBody + "\n");
                 if (responseBody.length() == 0) {
-                    return emptyMap();
+                    return new HttpResponse(response.getStatusLine(), emptyMap());
                 }
-                    ObjectMapper mapper = new ObjectMapper();
-                    return mapper.readValue(responseBody.toString(), Map.class);
+                ObjectMapper mapper = new ObjectMapper();
+                Map responseMap =  mapper.readValue(responseBody.toString(), Map.class);
+
+                return new HttpResponse(response.getStatusLine(), responseMap);
             }
         } finally {
             response.close();

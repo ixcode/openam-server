@@ -1,6 +1,8 @@
 package ixcode.openam.server;
 
+import ixcode.platform.HttpResponse;
 import ixcode.platform.HttpTestBase;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.junit.Before;
@@ -43,15 +45,17 @@ public class Test_Logout extends HttpTestBase {
         request.addHeader("iPlanetDirectoryPro".toLowerCase(), tokenId.toString());
         request.addHeader("Content-Type", "application/json");
 
-        Map responseData = http.execute_POST(request);
+        HttpResponse response = http.execute_POST(request);
 
-        assertThat((String)responseData.get("result"), is(equalTo("Successfully logged out")));
+        assertThat(response.stringValue("result"), is(equalTo("Successfully logged out")));
     }
 
     @Test
     public void can_logout_with_legacy_api() throws Exception {
         HttpPost request = new HttpPost("http://loan.example.com:9009/openam/identity/logout?subjectid=" + tokenId.toString());
 
-        Map responseData = http.execute_POST(request);
+        HttpResponse response = http.execute_POST(request);
+
+        assertThat(response.statusCode(), is(equalTo(200)));
     }
 }

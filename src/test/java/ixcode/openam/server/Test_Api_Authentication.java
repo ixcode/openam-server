@@ -1,5 +1,6 @@
 package ixcode.openam.server;
 
+import ixcode.platform.HttpResponse;
 import ixcode.platform.HttpTestBase;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -40,9 +41,9 @@ public class Test_Api_Authentication extends HttpTestBase {
         requestData.setContentType("application/json");
         request.setEntity(requestData);
 
-        Map responseData = http.execute_POST(request);
+        HttpResponse response = http.execute_POST(request);
 
-        assertThat(responseData.get("tokenId"), is(notNullValue()));
+        assertThat(response.stringValue("tokenId"), is(notNullValue()));
     }
 
     /**
@@ -68,9 +69,9 @@ public class Test_Api_Authentication extends HttpTestBase {
         requestData.setContentType("application/json");
         request.setEntity(requestData);
 
-        Map responseData = http.execute_POST(request);
+        HttpResponse response = http.execute_POST(request);
 
-        assertThat((Integer)responseData.get("code"), is(equalTo(401)));
+        assertThat(response.statusCode(), is(equalTo(401)));
     }
 
 

@@ -1,6 +1,7 @@
 package ixcode.openam.server;
 
 import ixcode.platform.Http;
+import ixcode.platform.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 
@@ -31,9 +32,9 @@ public class OpenAmClient {
             requestData.setContentType("application/json");
             request.setEntity(requestData);
 
-            Map responseData = http.execute_POST(request);
+            HttpResponse response = http.execute_POST(request);
 
-            return new OpenAmTokenId((String)responseData.get("tokenId"));
+            return new OpenAmTokenId(response.stringValue("tokenId"));
 
         } catch (Throwable t) {
             throw new RuntimeException(format("Could not authenticate user [%s] (See stack trace)", username), t);
