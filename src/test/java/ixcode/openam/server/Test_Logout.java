@@ -2,13 +2,9 @@ package ixcode.openam.server;
 
 import ixcode.platform.HttpResponse;
 import ixcode.platform.HttpTestBase;
-import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -24,11 +20,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class Test_Logout extends HttpTestBase {
 
-    private OpenAmTokenId tokenId;
+    private OpenAmSession session;
+
+    public Test_Logout() {
+        super("http://loan.example.com:9009/");
+    }
 
     @Before
     public void authenticate() throws Exception {
-        tokenId = new OpenAmClient(http).authenticate("demo", "changeit");
+        session = new OpenAmClient(http).authenticate("demo", "changeit");
     }
 
 
@@ -41,20 +41,20 @@ public class Test_Logout extends HttpTestBase {
      */
     @Test
     public void can_logout() throws Exception {
-        HttpPost request = new HttpPost("http://loan.example.com:9009/openam/json/sessions/?_action=logout");
-        request.addHeader("iPlanetDirectoryPro".toLowerCase(), tokenId.toString());
+        HttpPost request = new HttpPost(url("openam/json/sessions/?_action=logout"));
+        request.addHeader("iPlanetDirectoryPro".toLowerCase(), session.tokenId());
         request.addHeader("Content-Type", "application/json");
 
-        HttpResponse response = http.execute_POST(request);
+        HttpResponse response = http.execute(request);
 
         assertThat(response.stringValue("result"), is(equalTo("Successfully logged out")));
     }
 
     @Test
     public void can_logout_with_legacy_api() throws Exception {
-        HttpPost request = new HttpPost("http://loan.example.com:9009/openam/identity/logout?subjectid=" + tokenId.toString());
+        HttpPost request = new HttpPost("http://loan.example.com:9009/openam/identity/logout?subjectid=" + session.tokenId());
 
-        HttpResponse response = http.execute_POST(request);
+        HttpResponse response = http.execute(request);
 
         assertThat(response.statusCode(), is(equalTo(200)));
     }

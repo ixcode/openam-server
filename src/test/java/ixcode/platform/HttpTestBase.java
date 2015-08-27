@@ -3,12 +3,19 @@ package ixcode.platform;
 import org.junit.After;
 import org.junit.Before;
 
+import static java.lang.String.format;
+
 /**
  * Created by jmdb on 21/08/2015.
  */
 public abstract class HttpTestBase {
 
-    protected Http http = new Http();
+    protected final Http http = new Http();
+    protected final String baseUrl;
+
+    public HttpTestBase(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
     @Before
     public void init_http() {
@@ -18,5 +25,10 @@ public abstract class HttpTestBase {
     @After
     public void close_http() throws Exception {
         http.destroy();
+    }
+
+    protected String url(String path, Object... parameters) {
+        String parametersSubstituted =  format(path, parameters);
+        return format("%s%s", baseUrl, parametersSubstituted);
     }
 }

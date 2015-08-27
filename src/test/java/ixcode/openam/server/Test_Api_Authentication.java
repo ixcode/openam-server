@@ -6,8 +6,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 
-import java.util.Map;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -15,6 +13,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 public class Test_Api_Authentication extends HttpTestBase {
 
+
+    public Test_Api_Authentication() {
+        super("http://loan.example.com:9009");
+    }
 
     /**
      * <pre>
@@ -32,7 +34,7 @@ public class Test_Api_Authentication extends HttpTestBase {
     @Test
     public void can_authenticate_valid_user() throws Exception {
 
-        HttpPost request = new HttpPost("http://loan.example.com:9009/openam/json/authenticate");
+        HttpPost request = new HttpPost(url("/openam/json/authenticate"));
 
         request.addHeader("X-OpenAM-Username", "demo");
         request.addHeader("X-OpenAM-Password", "changeit");
@@ -41,7 +43,7 @@ public class Test_Api_Authentication extends HttpTestBase {
         requestData.setContentType("application/json");
         request.setEntity(requestData);
 
-        HttpResponse response = http.execute_POST(request);
+        HttpResponse response = http.execute(request);
 
         assertThat(response.stringValue("tokenId"), is(notNullValue()));
     }
@@ -69,7 +71,7 @@ public class Test_Api_Authentication extends HttpTestBase {
         requestData.setContentType("application/json");
         request.setEntity(requestData);
 
-        HttpResponse response = http.execute_POST(request);
+        HttpResponse response = http.execute(request);
 
         assertThat(response.statusCode(), is(equalTo(401)));
     }

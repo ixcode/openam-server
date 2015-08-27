@@ -5,9 +5,8 @@ import ixcode.platform.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 
-import java.util.Map;
-
 import static java.lang.String.format;
+import static org.apache.http.HttpStatus.SC_OK;
 
 /**
  * See https://backstage.forgerock.com/#!/docs/openam/12.0.0/dev-guide
@@ -21,7 +20,7 @@ public class OpenAmClient {
         this.http = http;
     }
 
-    public OpenAmTokenId authenticate(String username, String password) {
+    public OpenAmSession authenticate(String username, String password) {
         try {
             HttpPost request = new HttpPost("http://loan.example.com:9009/openam/json/authenticate");
 
@@ -32,12 +31,27 @@ public class OpenAmClient {
             requestData.setContentType("application/json");
             request.setEntity(requestData);
 
-            HttpResponse response = http.execute_POST(request);
+            HttpResponse response = http.execute(request);
 
-            return new OpenAmTokenId(response.stringValue("tokenId"));
+            return new OpenAmSession(this, new OpenAmTokenId(response.stringValue("tokenId")));
 
         } catch (Throwable t) {
             throw new RuntimeException(format("Could not authenticate user [%s] (See stack trace)", username), t);
+        }
+    }
+
+    boolean logout(OpenAmTokenId tokenId) {
+        try {
+            HttpPost request = new HttpPost("http://loan.example.com:9009/openam/json/sessions/?_action=logout");
+            request.addHeader("iPlanetDirectoryPro".toLowerCase(), tokenId.toString());
+            request.addHeader("Content-Type", "application/json");
+
+            HttpResponse response = http.execute(request);
+
+            return response.is(SC_OK);
+
+        } catch (Throwable t) {
+            throw new RuntimeException(format("Exception occured whilst logging out token [%s] (See stack trace)", tokenId), t);
         }
     }
 }

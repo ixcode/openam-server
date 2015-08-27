@@ -25,4 +25,12 @@ public class HttpResponse {
     public String stringValue(String key) {
         return responseValue(key);
     }
+
+    public boolean is(int statusCode) {
+        return statusCode == statusCode();
+    }
+
+    public boolean booleanValue(String key) {
+        return responseValue(key);
+    }
 }
