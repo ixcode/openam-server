@@ -4,9 +4,10 @@ import ixcode.platform.HttpResponse;
 import ixcode.platform.HttpTestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -19,13 +20,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
  * https://forgerock.org/topic/issue-with-openam-rest-calls/
  * @throws Exception
  */
-public class Test_Api_Tokens extends HttpTestBase {
+public class Test_Api_Users extends HttpTestBase {
 
 
     private OpenAmSession session;
     private OpenAmSession adminSession;
 
-    public Test_Api_Tokens() {
+    public Test_Api_Users() {
         super("http://loan.example.com:9009");
     }
 
@@ -46,33 +47,29 @@ public class Test_Api_Tokens extends HttpTestBase {
         adminSession.logout();
     }
 
+
+    /**
+     *
+     *
+     * @throws Exception
+     */
     @Test
-    public void validate_token() throws Exception {
-        HttpPost request = new HttpPost(url("/openam/json/sessions/%s/?_action=validate", session.tokenId()));
+    public void get_user_info() throws Exception {
+
+        HttpGet request = new HttpGet(url("/openam/json/users/demo?_prettyPrint=true"));
         request.addHeader("iPlanetDirectoryPro", session.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);
 
-        assertThat(response.booleanValue("valid"), is(true));
-    }
-
-    @Test
-    public void confirm_session_is_active() throws Exception {
-        HttpPost request = new HttpPost(url("/openam/json/sessions/?_action=isActive&tokenId=%s", session.tokenId()));
-        request.addHeader("iPlanetDirectoryPro", adminSession.tokenId());
-        request.addHeader("Content-Type", "application/json");
-
-        HttpResponse response = http.execute(request);
-
         assertThat(response.statusCode(), is(200));
 
     }
 
-
     @Test
-    public void max_time() throws Exception {
-        HttpPost request = new HttpPost(url("/openam/json/sessions/?_action=getMaxTime&tokenId=%s", session.tokenId()));
+    public void get_group_info() throws Exception {
+
+        HttpGet request = new HttpGet(url("/openam/json/groups/workers?_prettyPrint=true"));
         request.addHeader("iPlanetDirectoryPro", adminSession.tokenId());
         request.addHeader("Content-Type", "application/json");
 
@@ -83,9 +80,10 @@ public class Test_Api_Tokens extends HttpTestBase {
     }
 
     @Test
-    public void idle_time_remaining() throws Exception {
-        HttpPost request = new HttpPost(url("/openam/json/sessions/?_action=getIdle&tokenId=%s", session.tokenId()));
-        request.addHeader("iPlanetDirectoryPro", adminSession.tokenId());
+    public void get_user_id_from_session() throws Exception {
+
+        HttpPost request = new HttpPost(url("/openam/json/users?_action=idFromSession"));
+        request.addHeader("iPlanetDirectoryPro", session.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);
@@ -93,5 +91,7 @@ public class Test_Api_Tokens extends HttpTestBase {
         assertThat(response.statusCode(), is(200));
 
     }
+
+
 
 }
