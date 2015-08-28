@@ -4,9 +4,7 @@ import ixcode.platform.HttpResponse;
 import ixcode.platform.HttpTestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.is;
@@ -51,7 +49,7 @@ public class Test_Api_Tokens extends HttpTestBase {
     @Test
     public void validate_token() throws Exception {
         HttpPost request = new HttpPost(url("/openam/json/sessions/%s/?_action=validate", session.tokenId()));
-        request.addHeader("iPlanetDirectoryPro".toLowerCase(), session.tokenId());
+        request.addHeader("iPlanetDirectoryPro", session.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);
@@ -62,7 +60,7 @@ public class Test_Api_Tokens extends HttpTestBase {
     @Test
     public void confirm_session_is_active() throws Exception {
         HttpPost request = new HttpPost(url("/openam/json/sessions/?_action=isActive&tokenId=%s", session.tokenId()));
-        request.addHeader("iPlanetDirectoryPro".toLowerCase(), adminSession.tokenId());
+        request.addHeader("iPlanetDirectoryPro", adminSession.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);
@@ -75,7 +73,7 @@ public class Test_Api_Tokens extends HttpTestBase {
     @Test
     public void max_time() throws Exception {
         HttpPost request = new HttpPost(url("/openam/json/sessions/?_action=getMaxTime&tokenId=%s", session.tokenId()));
-        request.addHeader("iPlanetDirectoryPro".toLowerCase(), adminSession.tokenId());
+        request.addHeader("iPlanetDirectoryPro", adminSession.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);
@@ -87,7 +85,7 @@ public class Test_Api_Tokens extends HttpTestBase {
     @Test
     public void idle_time_remaining() throws Exception {
         HttpPost request = new HttpPost(url("/openam/json/sessions/?_action=getIdle&tokenId=%s", session.tokenId()));
-        request.addHeader("iPlanetDirectoryPro".toLowerCase(), adminSession.tokenId());
+        request.addHeader("iPlanetDirectoryPro", adminSession.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);
@@ -105,8 +103,21 @@ public class Test_Api_Tokens extends HttpTestBase {
     @Test
     public void get_user_info() throws Exception {
 
-        HttpGet request = new HttpGet(url("/openam/json/users/demo"));
-        request.addHeader("iPlanetDirectoryPro".toLowerCase(), session.tokenId());
+        HttpGet request = new HttpGet(url("/openam/json/users/demo?_prettyPrint=true"));
+        request.addHeader("iPlanetDirectoryPro", session.tokenId());
+        request.addHeader("Content-Type", "application/json");
+
+        HttpResponse response = http.execute(request);
+
+        assertThat(response.statusCode(), is(200));
+
+    }
+
+    @Test
+    public void get_group_info() throws Exception {
+
+        HttpGet request = new HttpGet(url("/openam/json/groups/workers?_prettyPrint=true"));
+        request.addHeader("iPlanetDirectoryPro", adminSession.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);
@@ -119,7 +130,7 @@ public class Test_Api_Tokens extends HttpTestBase {
     public void get_user_id_from_session() throws Exception {
 
         HttpPost request = new HttpPost(url("/openam/json/users?_action=idFromSession"));
-        request.addHeader("iPlanetDirectoryPro".toLowerCase(), session.tokenId());
+        request.addHeader("iPlanetDirectoryPro", session.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);
@@ -127,6 +138,7 @@ public class Test_Api_Tokens extends HttpTestBase {
         assertThat(response.statusCode(), is(200));
 
     }
+
 
 
 }

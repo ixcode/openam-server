@@ -11,7 +11,7 @@
     "id=demo,ou=user,dc=openam,dc=forgerock,dc=org"
   ],
   "createTimestamp": [
-    "20150822160211Z"
+    "20150828113026Z"
   ],
   "dn": [
     "uid=demo,ou=people,dc=openam,dc=forgerock,dc=org"
@@ -28,8 +28,8 @@
     "sunFederationManagerDataStore",
     "sunFMSAML2NameIdentifier",
     "devicePrintProfilesContainer",
-    "sunIdentityServerLibertyPPService",
     "inetorgperson",
+    "sunIdentityServerLibertyPPService",
     "iPlanetPreferences",
     "iplanet-am-user-service",
     "forgerock-am-dashboard-service",
@@ -40,6 +40,7 @@
     "iplanet-am-auth-configuration-service"
   ],
   "userPassword": [
-    "{SSHA}4nVyzwiqJB428M0hxC3Fle6ar7IhUHP8Zb65vQ=="
+    "{SSHA}tzz8QWBvxBrY9m/n7GyJKciaETYHfToYwoyBDA=="
   ]
 }
+

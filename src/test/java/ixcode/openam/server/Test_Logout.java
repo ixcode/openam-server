@@ -36,6 +36,8 @@ public class Test_Logout extends HttpTestBase {
      * When OpenAM searches for the header its looking for it in lower case
      * See bug at http://bugster.forgerock.org/jira/browse/OPENAM-6167
      *
+     * This only affects this endpoint
+     *
      * Doesn't seem to be affected by version of jetty
      * @throws Exception
      */
