@@ -1,0 +1,45 @@
+{
+  "username": "demo",
+  "realm": "/",
+  "uid": [
+    "demo"
+  ],
+  "inetUserStatus": [
+    "Active"
+  ],
+  "universalid": [
+    "id=demo,ou=user,dc=openam,dc=forgerock,dc=org"
+  ],
+  "createTimestamp": [
+    "20150822160211Z"
+  ],
+  "dn": [
+    "uid=demo,ou=people,dc=openam,dc=forgerock,dc=org"
+  ],
+  "sn": [
+    "demo"
+  ],
+  "cn": [
+    "demo"
+  ],
+  "objectClass": [
+    "iplanet-am-managed-person",
+    "inetuser",
+    "sunFederationManagerDataStore",
+    "sunFMSAML2NameIdentifier",
+    "devicePrintProfilesContainer",
+    "sunIdentityServerLibertyPPService",
+    "inetorgperson",
+    "iPlanetPreferences",
+    "iplanet-am-user-service",
+    "forgerock-am-dashboard-service",
+    "organizationalperson",
+    "top",
+    "sunAMAuthAccountLockout",
+    "person",
+    "iplanet-am-auth-configuration-service"
+  ],
+  "userPassword": [
+    "{SSHA}4nVyzwiqJB428M0hxC3Fle6ar7IhUHP8Zb65vQ=="
+  ]
+}

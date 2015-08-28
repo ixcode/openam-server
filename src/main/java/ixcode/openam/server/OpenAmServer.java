@@ -5,6 +5,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 
+import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class OpenAmServer {
 
             this.server = new Server(httpPort);
 
-            server.setHandler(rootHandler());
+            server.setHandler(rootHandler(server, openAmWarFilePath));
 
 
             server.start();
@@ -65,21 +66,38 @@ public class OpenAmServer {
         }
     }
 
-    private Handler rootHandler() {
+    private static Handler rootHandler(Server server, String openAmWarFilePath) {
         HandlerList handlerList = new HandlerList();
 
-        Handler[] handlers = new Handler[]{openAmWebAppHandler()};
+        Handler[] handlers = new Handler[]{openAmWebAppHandler(server, openAmWarFilePath)};
 
         handlerList.setHandlers(handlers);
 
         return handlerList;
     }
 
-    private Handler openAmWebAppHandler() {
-        WebAppContext webappHandler = new WebAppContext();
-        webappHandler.setContextPath("/openam");
-        webappHandler.setWar(openAmWarFilePath);
-        return webappHandler;
+    /**
+     * This is now specific to jetty 9.3
+     * @See https://eclipse.org/jetty/documentation/current/embedded-examples.html#embedded-webapp-jsp
+     * @param server
+     * @param openAmWarFilePath
+     * @return
+     */
+    private static Handler openAmWebAppHandler(Server server, String openAmWarFilePath) {
+        WebAppContext webAppContext = new WebAppContext();
+        webAppContext.setContextPath("/openam");
+        webAppContext.setWar(openAmWarFilePath);
+
+        Configuration.ClassList classlist = Configuration.ClassList.setServerDefault(server);
+        classlist.addBefore(
+                "org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
+                "org.eclipse.jetty.annotations.AnnotationConfiguration");
+
+        webAppContext.setAttribute(
+                "org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
+                ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$" );
+
+        return webAppContext;
     }
 
 
