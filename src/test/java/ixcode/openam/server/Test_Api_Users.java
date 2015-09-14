@@ -23,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class Test_Api_Users extends HttpTestBase {
 
 
-    private OpenAmSession session;
+    private OpenAmSession userSession;
     private OpenAmSession adminSession;
 
     public Test_Api_Users() {
@@ -33,13 +33,15 @@ public class Test_Api_Users extends HttpTestBase {
 
     @Before
     public void authenticate() {
-        session = new OpenAmClient(http).authenticate("demo", "changeit");
-        adminSession = new OpenAmClient(http).authenticate("amadmin", "openamdemonstration");
+        OpenAmClient openAmClient = new OpenAmClient(http);
+        userSession = openAmClient.authenticate("demo", "changeit");
+        adminSession = openAmClient.authenticate("amadmin", "openamdemonstration");
+
     }
 
     @After
     public void logout_user() {
-        session.logout();
+        userSession.logout();
     }
 
     @After
@@ -52,7 +54,7 @@ public class Test_Api_Users extends HttpTestBase {
     public void get_user_info() throws Exception {
 
         HttpGet request = new HttpGet(url("/openam/json/users/demo?_prettyPrint=true"));
-        request.addHeader("iPlanetDirectoryPro", session.tokenId());
+        request.addHeader("iPlanetDirectoryPro", userSession.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);
@@ -62,8 +64,9 @@ public class Test_Api_Users extends HttpTestBase {
     }
 
     /**
-     * For this to work, you need a "workers" group created. You can do this in the openam interface
-     * under the realm
+     * Need to have a group called 'workers' created - there is an api for this but it would be quite complex and difficult
+     * to make it smooth.
+     *
      * @throws Exception
      */
     @Test
@@ -83,7 +86,7 @@ public class Test_Api_Users extends HttpTestBase {
     public void get_user_id_from_session() throws Exception {
 
         HttpPost request = new HttpPost(url("/openam/json/users?_action=idFromSession"));
-        request.addHeader("iPlanetDirectoryPro", session.tokenId());
+        request.addHeader("iPlanetDirectoryPro", userSession.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);

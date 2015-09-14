@@ -11,22 +11,16 @@
     "id=demo,ou=user,dc=openam,dc=forgerock,dc=org"
   ],
   "createTimestamp": [
-    "20150828113026Z"
+    "20150914084701Z"
   ],
   "dn": [
     "uid=demo,ou=people,dc=openam,dc=forgerock,dc=org"
-  ],
-  "memberOf": [
-    "cn=administrators,cn=workers"
   ],
   "sn": [
     "demo"
   ],
   "cn": [
     "demo"
-  ],
-  "modifyTimestamp": [
-    "20150828152719Z"
   ],
   "objectClass": [
     "iplanet-am-managed-person",
@@ -46,6 +40,6 @@
     "iplanet-am-auth-configuration-service"
   ],
   "userPassword": [
-    "{SSHA}tzz8QWBvxBrY9m/n7GyJKciaETYHfToYwoyBDA=="
+    "{SSHA}47fSVYii2SWSIWCicWscbj3xZ9s1wNdovCU1gQ=="
   ]
 }

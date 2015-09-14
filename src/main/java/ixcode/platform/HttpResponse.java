@@ -22,6 +22,8 @@ public class HttpResponse {
         return responseStatusLine.getStatusCode();
     }
 
+    public String statusText() {return responseStatusLine.getReasonPhrase(); }
+
     public String stringValue(String key) {
         return responseValue(key);
     }
