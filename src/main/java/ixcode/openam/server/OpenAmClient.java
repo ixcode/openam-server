@@ -43,7 +43,7 @@ public class OpenAmClient {
     boolean logout(OpenAmTokenId tokenId) {
         try {
             HttpPost request = new HttpPost("http://loan.example.com:9009/openam/json/sessions/?_action=logout");
-            request.addHeader("iPlanetDirectoryPro", tokenId.toString());
+            request.addHeader("iPlanetDirectoryPro".toLowerCase(), tokenId.toString());
             request.addHeader("Content-Type", "application/json");
 
             HttpResponse response = http.execute(request);

@@ -11,7 +11,9 @@ public class OpenAmSession {
     }
 
     public void logout()  {
-        client.logout(tokenId);
+        if (!client.logout(tokenId)) {
+            throw new RuntimeException("Could not log out successfully (see logs)");
+        }
     }
 
     public String tokenId() {

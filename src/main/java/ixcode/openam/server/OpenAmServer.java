@@ -24,19 +24,22 @@ public class OpenAmServer {
     private static final Logger log = LoggerFactory.getLogger(OpenAmServer.class);
 
     public static void main(String[] args) {
-        new OpenAmServer("openam-server", 9009, args[0]).start();
+        String domainName = (args.length == 2) ? args[1] : "localhost";
+        new OpenAmServer("openam-server", 9009, args[0], domainName).start();
     }
 
     private String serverName;
     private final int httpPort;
     private final String openAmWarFilePath;
+    private String domainName;
     private Server server;
 
 
-    public OpenAmServer(String serverName, int httpPort, String openAmWarFilePath) {
+    public OpenAmServer(String serverName, int httpPort, String openAmWarFilePath, String domainName) {
         this.serverName = serverName;
         this.httpPort = httpPort;
         this.openAmWarFilePath = openAmWarFilePath;
+        this.domainName = domainName;
     }
 
     public void start() {
@@ -58,7 +61,7 @@ public class OpenAmServer {
             server.start();
 
             log.info((format("Open AM War from: [%s]", openAmWar.getAbsolutePath())));
-            log.info(format("Server [%s] started @ http://localhost:%d", serverName, httpPort));
+            log.info(format("Server [%s] started @ http://%s:%d/openam", serverName, domainName, httpPort));
 
             server.join();
         } catch (Throwable t) {

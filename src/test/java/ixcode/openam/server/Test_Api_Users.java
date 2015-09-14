@@ -48,11 +48,6 @@ public class Test_Api_Users extends HttpTestBase {
     }
 
 
-    /**
-     *
-     *
-     * @throws Exception
-     */
     @Test
     public void get_user_info() throws Exception {
 
@@ -66,6 +61,11 @@ public class Test_Api_Users extends HttpTestBase {
 
     }
 
+    /**
+     * For this to work, you need a "workers" group created. You can do this in the openam interface
+     * under the realm
+     * @throws Exception
+     */
     @Test
     public void get_group_info() throws Exception {
 
