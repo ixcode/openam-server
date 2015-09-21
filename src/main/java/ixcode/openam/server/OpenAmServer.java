@@ -82,6 +82,7 @@ public class OpenAmServer {
     /**
      * This is now specific to jetty 9.3
      * @See https://eclipse.org/jetty/documentation/current/embedded-examples.html#embedded-webapp-jsp
+     * @See https://eclipse.org/jetty/documentation/current/ref-temporary-directories.html
      * @param server
      * @param openAmWarFilePath
      * @return
@@ -90,6 +91,8 @@ public class OpenAmServer {
         WebAppContext webAppContext = new WebAppContext();
         webAppContext.setContextPath("/openam");
         webAppContext.setWar(openAmWarFilePath);
+        webAppContext.setPersistTempDirectory(true);
+        webAppContext.setTempDirectory(new File("/var/openam/war"));
 
         Configuration.ClassList classlist = Configuration.ClassList.setServerDefault(server);
         classlist.addBefore(
