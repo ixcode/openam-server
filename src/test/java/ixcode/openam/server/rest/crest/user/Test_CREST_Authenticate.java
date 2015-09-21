@@ -1,7 +1,7 @@
-package ixcode.openam.server.rest.crest;
+package ixcode.openam.server.rest.crest.user;
 
+import ixcode.openam.server.rest.OpenAmRestApi_TestBase;
 import ixcode.platform.HttpResponse;
-import ixcode.platform.HttpTestBase;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
@@ -13,12 +13,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class Test_CREST_Authentication extends HttpTestBase {
+public class Test_CREST_Authenticate extends OpenAmRestApi_TestBase {
 
-
-    public Test_CREST_Authentication() {
-        super("http://loan.example.com:9009");
-    }
 
     /**
      * <pre>

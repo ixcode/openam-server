@@ -1,7 +1,9 @@
-package ixcode.openam.server;
+package ixcode.openam.server.rest.crest.user;
 
+import ixcode.openam.server.OpenAmClient;
+import ixcode.openam.server.OpenAmSession;
+import ixcode.openam.server.rest.OpenAmRestApi_TestBase;
 import ixcode.platform.HttpResponse;
-import ixcode.platform.HttpTestBase;
 import org.apache.http.client.methods.HttpPost;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,17 +20,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
  *       --header "Content-Type: application/json" \
  *      "http://loan.example.com:9009/openam/json/sessions/?_action=logout"
  */
-public class Test_Logout extends HttpTestBase {
+public class Test_CREST_Logout extends OpenAmRestApi_TestBase {
 
-    private OpenAmSession session;
+    private OpenAmSession userSession;
 
-    public Test_Logout() {
-        super("http://loan.example.com:9009/");
-    }
 
     @Before
     public void authenticate() throws Exception {
-        session = new OpenAmClient(http).authenticate("demo", "changeit");
+        userSession = new OpenAmClient(http).authenticate("demo", "changeit");
     }
 
 
@@ -36,15 +35,14 @@ public class Test_Logout extends HttpTestBase {
      * When OpenAM searches for the header its looking for it in lower case
      * See bug at http://bugster.forgerock.org/jira/browse/OPENAM-6167
      *
-     * This only affects this endpoint
      *
      * Doesn't seem to be affected by version of jetty
      * @throws Exception
      */
     @Test
     public void can_logout() throws Exception {
-        HttpPost request = new HttpPost(url("openam/json/sessions/?_action=logout"));
-        request.addHeader("iPlanetDirectoryPro".toLowerCase(), session.tokenId());
+        HttpPost request = new HttpPost(url("/openam/json/sessions/?_action=logout"));
+        request.addHeader("iPlanetDirectoryPro".toLowerCase(), userSession.tokenId());
         request.addHeader("Content-Type", "application/json");
 
         HttpResponse response = http.execute(request);
@@ -54,10 +52,6 @@ public class Test_Logout extends HttpTestBase {
 
     @Test
     public void can_logout_with_legacy_api() throws Exception {
-        HttpPost request = new HttpPost("http://loan.example.com:9009/openam/identity/logout?subjectid=" + session.tokenId());
 
-        HttpResponse response = http.execute(request);
-
-        assertThat(response.statusCode(), is(equalTo(200)));
     }
 }

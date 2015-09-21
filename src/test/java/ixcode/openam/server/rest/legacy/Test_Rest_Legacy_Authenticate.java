@@ -13,9 +13,9 @@ import static org.junit.Assert.assertThat;
 /**
  * @see http://openam.forgerock.org/doc/bootstrap/dev-guide/index.html#deprecated-apis-auth
  */
-public class Test_Legacy_Rest_Authentication extends HttpTestBase {
+public class Test_Rest_Legacy_Authenticate extends HttpTestBase {
 
-    public Test_Legacy_Rest_Authentication() {
+    public Test_Rest_Legacy_Authenticate() {
         super("http://loan.example.com:9009");
     }
 
