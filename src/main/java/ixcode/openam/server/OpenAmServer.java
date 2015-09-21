@@ -1,10 +1,8 @@
 package ixcode.openam.server;
 
-import ixcode.platform.LogbackConfiguration;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
-
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
@@ -13,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import static ch.qos.logback.classic.Level.DEBUG;
 import static ch.qos.logback.classic.Level.INFO;
 import static ixcode.platform.LogbackConfiguration.STANDARD_OPS_FORMAT;
 import static ixcode.platform.LogbackConfiguration.initialiseConsoleLogging;
@@ -51,16 +48,19 @@ public class OpenAmServer {
                 throw new FileNotFoundException(openAmWar.getAbsolutePath());
             }
 
+            File tempDirectory = new File("/var/openam/" + openAmWar.getName());
+
             log.info(format("Starting Server [%s] on port %d", serverName, httpPort));
 
             this.server = new Server(httpPort);
 
-            server.setHandler(rootHandler(server, openAmWarFilePath));
+            server.setHandler(rootHandler(server, openAmWar, tempDirectory));
 
 
             server.start();
 
-            log.info((format("Open AM War from: [%s]", openAmWar.getAbsolutePath())));
+            log.info((format("Open AM War from      : [%s]", openAmWar.getAbsolutePath())));
+            log.info((format("Open AM War temp file : [%s]", tempDirectory.getAbsolutePath())));
             log.info(format("Server [%s] started @ http://%s:%d/openam", serverName, domainName, httpPort));
 
             server.join();
@@ -69,10 +69,11 @@ public class OpenAmServer {
         }
     }
 
-    private static Handler rootHandler(Server server, String openAmWarFilePath) {
+    private static Handler rootHandler(Server server, File warFile, File tempDirectory) {
         HandlerList handlerList = new HandlerList();
 
-        Handler[] handlers = new Handler[]{openAmWebAppHandler(server, openAmWarFilePath)};
+
+        Handler[] handlers = new Handler[]{openAmWebAppHandler(server, warFile, tempDirectory)};
 
         handlerList.setHandlers(handlers);
 
@@ -81,18 +82,21 @@ public class OpenAmServer {
 
     /**
      * This is now specific to jetty 9.3
-     * @See https://eclipse.org/jetty/documentation/current/embedded-examples.html#embedded-webapp-jsp
-     * @See https://eclipse.org/jetty/documentation/current/ref-temporary-directories.html
+     *
      * @param server
      * @param openAmWarFilePath
      * @return
+     * @See https://eclipse.org/jetty/documentation/current/embedded-examples.html#embedded-webapp-jsp
+     * @See https://eclipse.org/jetty/documentation/current/ref-temporary-directories.html
      */
-    private static Handler openAmWebAppHandler(Server server, String openAmWarFilePath) {
+    private static Handler openAmWebAppHandler(Server server, File warFile, File tempDirectory) {
+
+
         WebAppContext webAppContext = new WebAppContext();
         webAppContext.setContextPath("/openam");
-        webAppContext.setWar(openAmWarFilePath);
+        webAppContext.setWar(warFile.getAbsolutePath());
         webAppContext.setPersistTempDirectory(true);
-        webAppContext.setTempDirectory(new File("/var/openam/war"));
+        webAppContext.setTempDirectory(tempDirectory);
 
         Configuration.ClassList classlist = Configuration.ClassList.setServerDefault(server);
         classlist.addBefore(
@@ -101,7 +105,7 @@ public class OpenAmServer {
 
         webAppContext.setAttribute(
                 "org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
-                ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$" );
+                ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$");
 
         return webAppContext;
     }
