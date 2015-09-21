@@ -2,16 +2,10 @@ package ixcode.openam.server;
 
 import ixcode.platform.Http;
 import ixcode.platform.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 
-import java.util.Optional;
-
-import static ixcode.openam.server.OpenAmGroup.parseResponse;
 import static java.lang.String.format;
-import static org.apache.http.HttpStatus.SC_NOT_FOUND;
 import static org.apache.http.HttpStatus.SC_OK;
 
 /**

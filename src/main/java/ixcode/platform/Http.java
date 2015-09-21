@@ -2,10 +2,7 @@ package ixcode.platform;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -14,10 +11,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.io.StringReader;
+import java.util.*;
 
+import static java.lang.String.format;
 import static java.lang.System.out;
 import static java.util.Collections.emptyMap;
 
@@ -40,7 +37,7 @@ public class Http {
 
     }
 
-    public HttpResponse execute(HttpUriRequest request) throws IOException {
+    public HttpResponse execute(HttpUriRequest request) {
         out.println(request);
 
         List<Header> headers = Arrays.asList(request.getAllHeaders());
@@ -49,51 +46,80 @@ public class Http {
         }
         out.println("");
 
-        CloseableHttpResponse response = http.execute(request);
-
         try {
-            out.println(response.getStatusLine());
-            headers = Arrays.asList(response.getAllHeaders());
-            for (Header h : headers) {
-                out.println(h);
-            }
+            CloseableHttpResponse response = http.execute(request);
 
-            HttpEntity entity = response.getEntity();
+            try {
+                out.println(response.getStatusLine());
+                headers = Arrays.asList(response.getAllHeaders());
+                for (Header h : headers) {
+                    out.println(h);
+                }
+
+                HttpEntity entity = response.getEntity();
 
 
-            if (entity != null) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
-                StringBuffer responseBody = new StringBuffer();
-                String inputLine;
-                try {
-                    while ((inputLine = in.readLine()) != null) {
-                        responseBody.append(inputLine);
+                if (entity != null) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(entity.getContent()));
+                    StringBuffer responseBody = new StringBuffer();
+                    String inputLine;
+                    try {
+                        while ((inputLine = in.readLine()) != null) {
+                            responseBody.append(inputLine);
+                        }
+                    } finally {
+                        in.close();
                     }
-                } finally {
-                    in.close();
-                }
 
-                out.println("\n" + responseBody + "\n");
-                if (responseBody.length() == 0 || !isJson(response) || isZeroContentLength(response)) {
-                    return new HttpResponse(response.getStatusLine(), emptyMap());
-                }
-                ObjectMapper mapper = new ObjectMapper();
-                Map responseMap =  mapper.readValue(responseBody.toString(), Map.class);
+                    out.println("\n" + responseBody + "\n");
+                    Map responseMap = processResponseBody(response, responseBody);
 
-                return new HttpResponse(response.getStatusLine(), responseMap);
+                    return new HttpResponse(response.getStatusLine(), responseMap);
+                }
+            } finally {
+                response.close();
             }
-        } finally {
-            response.close();
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not execute request " + request + " (see stack trace)", ex);
+
         }
         return null;
     }
+
+    private Map processResponseBody(CloseableHttpResponse response, StringBuffer responseBody) throws IOException {
+
+        if (isZeroContentLength(response)) {
+            return emptyMap();
+        }
+
+        if (isJson(response)) {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(responseBody.toString(), Map.class);
+        } else if (isText(response)) {
+            Properties p = new Properties();
+            p.load(new StringReader(responseBody.toString()));
+            return new HashMap<Object, Object>(p);
+        }
+
+        throw new RuntimeException(format("Could not understand response body [%s]", responseBody));
+    }
+
 
     private boolean isZeroContentLength(CloseableHttpResponse response) {
         return 0 == Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
     }
 
     private boolean isJson(CloseableHttpResponse response) {
-        return response.getFirstHeader("Content-Type").getValue().contains("application/json");
+        return isContentType(response, "application/json");
+    }
+
+
+    private boolean isText(CloseableHttpResponse response) {
+        return isContentType(response, "text/plain");
+    }
+
+    private boolean isContentType(CloseableHttpResponse response, String contentType) {
+        return response.getFirstHeader("Content-Type").getValue().contains(contentType);
     }
 
     public void destroy() throws Exception {
