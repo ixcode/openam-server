@@ -6,6 +6,11 @@ import ixcode.openam.server.rest.OpenAmRestApi_TestBase_UserAuthenticated;
 import org.junit.After;
 import org.junit.Before;
 
+/**
+ * http://openam.forgerock.org/openam-documentation/openam-doc-source/doc/webhelp/admin-guide/amadmin-changes.html
+ *
+ * Not that some code is hardcoded to amadmin
+ */
 public class OpenAmRestApi_TestBase_AdminAuthenticated extends OpenAmRestApi_TestBase_UserAuthenticated {
 
     protected OpenAmSession adminSession;
