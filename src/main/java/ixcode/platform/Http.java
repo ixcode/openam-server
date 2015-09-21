@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.System.out;
 import static java.util.Collections.emptyMap;
 
 /**
@@ -40,21 +41,21 @@ public class Http {
     }
 
     public HttpResponse execute(HttpUriRequest request) throws IOException {
-        System.out.println(request);
+        out.println(request);
 
         List<Header> headers = Arrays.asList(request.getAllHeaders());
         for (Header h : headers) {
-            System.out.println(h);
+            out.println(h);
         }
-        System.out.println("");
+        out.println("");
 
         CloseableHttpResponse response = http.execute(request);
 
         try {
-            System.out.println(response.getStatusLine());
+            out.println(response.getStatusLine());
             headers = Arrays.asList(response.getAllHeaders());
             for (Header h : headers) {
-                System.out.println(h);
+                out.println(h);
             }
 
             HttpEntity entity = response.getEntity();
@@ -71,8 +72,9 @@ public class Http {
                 } finally {
                     in.close();
                 }
-                System.out.println("\n" + responseBody + "\n");
-                if (responseBody.length() == 0) {
+
+                out.println("\n" + responseBody + "\n");
+                if (responseBody.length() == 0 || !isJson(response) || isZeroContentLength(response)) {
                     return new HttpResponse(response.getStatusLine(), emptyMap());
                 }
                 ObjectMapper mapper = new ObjectMapper();
@@ -84,6 +86,14 @@ public class Http {
             response.close();
         }
         return null;
+    }
+
+    private boolean isZeroContentLength(CloseableHttpResponse response) {
+        return 0 == Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
+    }
+
+    private boolean isJson(CloseableHttpResponse response) {
+        return response.getFirstHeader("Content-Type").getValue().contains("application/json");
     }
 
     public void destroy() throws Exception {

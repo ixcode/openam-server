@@ -4,10 +4,12 @@ import ixcode.platform.HttpResponse;
 import ixcode.platform.HttpTestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -63,9 +65,20 @@ public class Test_Api_Users extends HttpTestBase {
 
     }
 
+    @Test
+    public void get_user_info_legacy() throws Exception {
+        HttpPost request = new HttpPost(url("/openam/identity/attributes?subjectid=%s", userSession.tokenId()));
+
+        HttpResponse response = http.execute(request);
+
+        assertThat(response.statusCode(), is(200));
+
+    }
+
+
     /**
      * Need to have a group called 'workers' created - there is an api for this but it would be quite complex and difficult
-     * to make it smooth.
+     * to make it smooth. So you need to create it yourself.
      *
      * @throws Exception
      */

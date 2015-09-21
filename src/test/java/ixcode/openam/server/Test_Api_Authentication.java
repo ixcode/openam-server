@@ -48,14 +48,6 @@ public class Test_Api_Authentication extends HttpTestBase {
         assertThat(response.stringValue("tokenId"), is(notNullValue()));
     }
 
-    /**
-     *
-     * @throws Exception
-     */
-    @Test
-    public void can_authenticate_valid_user_with_legacy_api() throws Exception {
-
-    }
 
 
     @Test
