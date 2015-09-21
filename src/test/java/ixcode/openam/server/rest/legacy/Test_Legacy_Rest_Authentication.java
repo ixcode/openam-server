@@ -10,9 +10,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class Test_Legacy_Authentication extends HttpTestBase {
+/**
+ * @see http://openam.forgerock.org/doc/bootstrap/dev-guide/index.html#deprecated-apis-auth
+ */
+public class Test_Legacy_Rest_Authentication extends HttpTestBase {
 
-    public Test_Legacy_Authentication() {
+    public Test_Legacy_Rest_Authentication() {
         super("http://loan.example.com:9009");
     }
 
@@ -30,5 +33,15 @@ public class Test_Legacy_Authentication extends HttpTestBase {
 
         assertThat(response.statusCode(), is(HttpStatus.SC_OK));
         assertThat("Should have responded with a token id", response.stringValue("token.id"), is(notNullValue()));
+    }
+
+    @Test
+    public void fails_to_authenticate_invalid_user() {
+        HttpPost request = new HttpPost(url("/openam/identity/authenticate?username=demo&password=foo"));
+
+        HttpResponse response = http.execute(request);
+
+        assertThat(response.statusCode(), is(HttpStatus.SC_UNAUTHORIZED));
+
     }
 }
