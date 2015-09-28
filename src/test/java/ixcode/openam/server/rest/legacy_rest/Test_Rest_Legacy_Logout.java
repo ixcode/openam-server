@@ -1,4 +1,4 @@
-package ixcode.openam.server.rest.legacy;
+package ixcode.openam.server.rest.legacy_rest;
 
 import ixcode.openam.server.OpenAmClient;
 import ixcode.openam.server.OpenAmSession;

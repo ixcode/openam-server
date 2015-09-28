@@ -29,6 +29,6 @@ public abstract class HttpTestBase {
 
     protected String url(String path, Object... parameters) {
         String parametersSubstituted =  format(path, parameters);
-        return format("%s%s", baseUrl, parametersSubstituted);
+        return format("%s%s", baseUrl, parametersSubstituted).replaceAll("\\+", "%20");
     }
 }

@@ -1,4 +1,4 @@
-package ixcode.openam.server.rest.legacy;
+package ixcode.openam.server.rest.legacy_rest;
 
 import ixcode.openam.server.rest.OpenAmRestApi_TestBase_UserAuthenticated;
 import ixcode.platform.HttpResponse;

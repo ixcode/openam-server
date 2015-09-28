@@ -33,7 +33,7 @@ public class Test_CREST_User extends OpenAmRestApi_TestBase_UserAuthenticated {
 
 
     /**
-     * This doesn't return the group info as yet, see the legacy user info (Identity) api
+     * This doesn't return the group info as yet, see the legacy_rest user info (Identity) api
      * @See https://forgerock.org/topic/getting-the-users-groupsrole-using-rest-api-in-newer-version-of-apis12/#post-5495
      * @throws Exception
      */

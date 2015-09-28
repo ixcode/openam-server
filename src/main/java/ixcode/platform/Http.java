@@ -27,12 +27,18 @@ public class Http {
     public Http() {
     }
 
+    public static void addBasicAuthzHeader(HttpUriRequest request, String username, String password) {
+        String credentials = new String(Base64.getEncoder().encode((username + ":" + password).getBytes()));
+        request.addHeader("Authorization", "Basic " + credentials);
+    }
+
 
     public void init() {
         http = HttpClientBuilder.create()
                 .disableContentCompression()
                 .disableConnectionState()
                 .setKeepAliveStrategy(null)
+
                 .build();
 
     }
@@ -106,7 +112,12 @@ public class Http {
 
 
     private boolean isZeroContentLength(CloseableHttpResponse response) {
-        return 0 == Integer.parseInt(response.getFirstHeader("Content-Length").getValue());
+        Header contentLengthHeader = response.getFirstHeader("Content-Length");
+        if (contentLengthHeader == null) {
+            return false;
+        }
+        return 0 == Integer.parseInt(contentLengthHeader.getValue());
+
     }
 
     private boolean isJson(CloseableHttpResponse response) {

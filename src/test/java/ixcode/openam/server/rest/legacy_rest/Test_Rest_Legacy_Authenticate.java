@@ -1,4 +1,4 @@
-package ixcode.openam.server.rest.legacy;
+package ixcode.openam.server.rest.legacy_rest;
 
 import ixcode.platform.HttpResponse;
 import ixcode.platform.HttpTestBase;
