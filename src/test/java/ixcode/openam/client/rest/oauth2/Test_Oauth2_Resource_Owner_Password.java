@@ -1,4 +1,4 @@
-package ixcode.openam.server.rest.oauth2;
+package ixcode.openam.client.rest.oauth2;
 
 import ixcode.platform.HttpResponse;
 import ixcode.platform.HttpTestBase;

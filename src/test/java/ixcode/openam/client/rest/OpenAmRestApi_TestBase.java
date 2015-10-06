@@ -1,4 +1,4 @@
-package ixcode.openam.server.rest;
+package ixcode.openam.client.rest;
 
 import ixcode.platform.HttpTestBase;
 

@@ -1,4 +1,4 @@
-package ixcode.openam.server;
+package ixcode.openam.client;
 
 import ixcode.platform.Http;
 import ixcode.platform.HttpResponse;

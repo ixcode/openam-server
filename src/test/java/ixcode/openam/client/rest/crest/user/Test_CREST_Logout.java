@@ -1,8 +1,8 @@
-package ixcode.openam.server.rest.crest.user;
+package ixcode.openam.client.rest.crest.user;
 
-import ixcode.openam.server.OpenAmClient;
-import ixcode.openam.server.OpenAmSession;
-import ixcode.openam.server.rest.OpenAmRestApi_TestBase;
+import ixcode.openam.client.OpenAmClient;
+import ixcode.openam.client.OpenAmSession;
+import ixcode.openam.client.rest.OpenAmRestApi_TestBase;
 import ixcode.platform.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.junit.Before;

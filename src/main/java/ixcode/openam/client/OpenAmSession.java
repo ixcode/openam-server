@@ -1,4 +1,4 @@
-package ixcode.openam.server;
+package ixcode.openam.client;
 
 public class OpenAmSession {
 

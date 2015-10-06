@@ -1,7 +1,7 @@
-package ixcode.openam.server.rest.legacy_rest;
+package ixcode.openam.client.rest.legacy_rest;
 
-import ixcode.openam.server.OpenAmClient;
-import ixcode.openam.server.OpenAmSession;
+import ixcode.openam.client.OpenAmClient;
+import ixcode.openam.client.OpenAmSession;
 import ixcode.platform.HttpResponse;
 import ixcode.platform.HttpTestBase;
 import org.apache.http.client.methods.HttpPost;

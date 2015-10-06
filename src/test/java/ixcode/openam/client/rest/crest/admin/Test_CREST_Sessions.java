@@ -1,4 +1,4 @@
-package ixcode.openam.server.rest.crest.admin;
+package ixcode.openam.client.rest.crest.admin;
 
 import ixcode.platform.HttpResponse;
 import org.apache.http.client.methods.HttpPost;

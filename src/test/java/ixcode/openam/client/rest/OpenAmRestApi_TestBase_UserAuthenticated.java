@@ -1,7 +1,7 @@
-package ixcode.openam.server.rest;
+package ixcode.openam.client.rest;
 
-import ixcode.openam.server.OpenAmClient;
-import ixcode.openam.server.OpenAmSession;
+import ixcode.openam.client.OpenAmClient;
+import ixcode.openam.client.OpenAmSession;
 import org.junit.After;
 import org.junit.Before;
 
