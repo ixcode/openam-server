@@ -4,24 +4,26 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
-import static org.eclipse.jetty.servlets.CrossOriginFilter.*;
-
-import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import static ch.qos.logback.classic.Level.INFO;
 import static ixcode.platform.LogbackConfiguration.STANDARD_OPS_FORMAT;
@@ -103,86 +105,42 @@ public class OpenAmServer {
     private static Handler openAmWebAppHandler(Server server, File warFile, File tempDirectory) {
 
 
-        WebAppContext webAppContext = new WebAppContext();
+        final WebAppContext webAppContext = new WebAppContext();
         webAppContext.setContextPath("/openam");
         webAppContext.setWar(warFile.getAbsolutePath());
         webAppContext.setPersistTempDirectory(true);
         webAppContext.setTempDirectory(tempDirectory);
 
-        addCrossOriginFilter(webAppContext);
+
+        //addCrossOriginFilter(webAppContext);
+        webAppContext.addEventListener(new ServletContextListener() {
+            @Override
+            public void contextInitialized(ServletContextEvent servletContextEvent) {
+
+            }
+
+            @Override
+            public void contextDestroyed(ServletContextEvent servletContextEvent) {
+
+            }
+        });
+
 
         // Jetty 9.3 part
         Configuration.ClassList classlist = Configuration.ClassList.setServerDefault(server);
 
-        classlist.addBefore(
-                "org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
+        classlist.addBefore("org.eclipse.jetty.webapp.JettyWebXmlConfiguration",
                 "org.eclipse.jetty.annotations.AnnotationConfiguration");
 
-        webAppContext.setAttribute(
-                "org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
+        webAppContext.setAttribute("org.eclipse.jetty.server.webapp.ContainerIncludeJarPattern",
                 ".*/[^/]*servlet-api-[^/]*\\.jar$|.*/javax.servlet.jsp.jstl-.*\\.jar$|.*/[^/]*taglibs.*\\.jar$");
+
+        classlist.addAfter("org.eclipse.jetty.webapp.WebXmlConfiguration",
+                CorsFilterConfiguration.class.getName());
 
         return webAppContext;
     }
 
-    /**
-     * TODO - parameterise in config wether to allow cross origin filter
-     * TODO - parameterise in config ALLOWED_ORIGINS
-     * TODO - Write tests for the filter?
-     *
-     * See https://forgerock.org/2015/02/openam-with-cors-is-that-a-salad-dessert-or-main-course/
-     *
-     * optional parameters are:
-     * expectedHostname
-     * exposeHeadersmaxAge
-     */
-    private static void addCrossOriginFilter(WebAppContext webAppContext) {
-        FilterHolder filterHolder = webAppContext.addFilter(getCORSFilterClass(webAppContext), "/json/*", EnumSet.of(REQUEST));
-
-        filterHolder.setInitParameter("methods", "POST,GET,PUT,DELETE,PATCH,OPTIONS");
-        filterHolder.setInitParameter("origins", "*");
-        filterHolder.setInitParameter("allowCredentials", "true");
-        filterHolder.setInitParameter("headers", "X-OpenAM-Username, X-OpenAM-Password,Content-Type,Accept,Origin,Access-Control-Request-Headers,cache-control, Authorization");
-
-
-
-        log.info("Setup CORS Filter ok.");
-
-    }
-
-    /**
-     * Need to work out how to ensure that we do this after the WAR file has been extracted
-     * @param webAppContext
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    private static Class<? extends Filter> getCORSFilterClass(WebAppContext webAppContext) {
-
-        String corsFilterClassName = "org.forgerock.openam.cors.CORSFilter";
-        try {
-            File libDir = new File(webAppContext.getTempDirectory(), "webapp/WEB-INF/lib");
-
-            String[] jars = libDir.list(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".jar");
-                }
-            });
-
-            List<URL> libJarUrls = new ArrayList<URL>();
-            for (String libJarName : jars) {
-                libJarUrls.add(new File(libDir,  libJarName).toURI().toURL());
-            }
-
-            log.info("LibJars: " + libJarUrls);
-            URLClassLoader loader = new URLClassLoader(libJarUrls.toArray(new URL[0]));
-
-
-            return (Class<? extends Filter>) loader.loadClass(corsFilterClassName);
-        } catch (Throwable t) {
-            throw new RuntimeException(format("Could not load class [%s]", corsFilterClassName), t);
-        }
-    }
 
 
 }
