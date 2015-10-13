@@ -3,35 +3,60 @@ package ixcode.platform;
 import org.apache.http.client.methods.CloseableHttpResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.Arrays.asList;
 
 public class UserDetailsResponseHandler implements ResponseHandler {
+
+    public static String[] EMPTY_ARR = new String[0];
+
     public static Map<String, String[]> parseUserDetails(String userDetails) {
         String[] items = userDetails.split("userdetails.");
         Map<String, String[]> data = new HashMap<String, String[]>();
         AttributeBuilder attributeBuilder = null;
         for (String item : items) {
+            System.out.println(item);
             if (item.length() == 0) {
                 continue;
             }
-            String[] tuple = item.split("=");
-            if ("attribute.name".equals(tuple[0])) {
-                if (attributeBuilder != null) {
-                    attributeBuilder.addTo(data);
-                }
-                attributeBuilder = new AttributeBuilder();
-                attributeBuilder.name(tuple[1]);
-            } else if ("attribute.value".equals(tuple[0])) {
-                attributeBuilder.value(tuple[1]);
+
+
+            if (item.startsWith("role")) {
+                addRole(data, item);
             } else {
-                data.put(tuple[0], new String[]{tuple[1]});
+                String[] strings = item.split("=");
+                if ("attribute.name".equals(strings[0])) {
+                    if (attributeBuilder != null) {
+                        attributeBuilder.addTo(data);
+                    }
+                    attributeBuilder = new AttributeBuilder();
+                    attributeBuilder.name(strings[1]);
+                } else if ("attribute.value".equals(strings[0])) {
+                    attributeBuilder.value(strings[1]);
+                } else {
+                    data.put(strings[0], new String[]{strings[1]});
+                }
             }
+
         }
 
-       return data;
+        return data;
+    }
+
+    private static void addRole(Map<String, String[]> data, String item) {
+        String toParse = item.substring("role=".length());
+        String[] strings = toParse.split(",");
+
+        String role = strings[0].split("=")[1];
+        if (!data.containsKey("roles")) {
+            data.put("roles", new String[]{role});
+        } else {
+            String[] values = data.get("roles");
+            ArrayList<String> strings1 = new ArrayList<String>(asList(values));
+            strings1.add(role);
+            data.put("roles", strings1.toArray(EMPTY_ARR));
+        }
     }
 
     static String debugArray(String[] arr) {
@@ -51,7 +76,7 @@ public class UserDetailsResponseHandler implements ResponseHandler {
 
     public static class AttributeBuilder {
 
-        private static String[] EMPTY_ARR = new String[0];
+
         private List<String> values = new ArrayList<String>();
         private String name;
 
@@ -67,4 +92,6 @@ public class UserDetailsResponseHandler implements ResponseHandler {
             this.values.add(value);
         }
     }
+
+
 }
