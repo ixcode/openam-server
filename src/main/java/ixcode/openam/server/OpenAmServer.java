@@ -112,7 +112,6 @@ public class OpenAmServer {
         webAppContext.setTempDirectory(tempDirectory);
 
 
-        //addCrossOriginFilter(webAppContext);
         webAppContext.addEventListener(new ServletContextListener() {
             @Override
             public void contextInitialized(ServletContextEvent servletContextEvent) {
